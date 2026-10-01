@@ -1,0 +1,19 @@
+# Nodes: <id> <name>
+0 Highway_Inlet_S
+1 Junction_North
+2 Junction_South
+3 Square_Central
+4 East_Boulevard
+5 Downtown_Exit_T
+
+# Edges: <from> <to> <capacity>
+0 1 1600.0
+0 2 1300.0
+1 2 400.0
+1 3 1200.0
+2 1 100.0
+2 4 1400.0
+3 2 900.0
+3 5 2000.0
+4 3 700.0
+4 5 400.0

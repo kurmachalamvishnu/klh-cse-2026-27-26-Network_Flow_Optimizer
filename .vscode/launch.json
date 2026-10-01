@@ -1,0 +1,58 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "NetworkFlowOptimization_e914b423"
+        },
+        {
+            "type": "java",
+            "name": "🌐 Launch Website Dashboard in Browser (Default)",
+            "request": "launch",
+            "mainClass": "Main",
+            "args": [],
+            "projectName": "NetworkFlowOptimization"
+        },
+        {
+            "type": "java",
+            "name": "💻 Launch Interactive Terminal Console",
+            "request": "launch",
+            "mainClass": "Main",
+            "args": [
+                "--cli"
+            ],
+            "console": "integratedTerminal",
+            "projectName": "NetworkFlowOptimization"
+        },
+        {
+            "type": "java",
+            "name": "🚀 Launch Desktop Swing GUI (Legacy)",
+            "request": "launch",
+            "mainClass": "Main",
+            "args": [
+                "--gui"
+            ],
+            "projectName": "NetworkFlowOptimization"
+        },
+        {
+            "type": "java",
+            "name": "📊 Run Benchmark Comparison Table",
+            "request": "launch",
+            "mainClass": "Main",
+            "args": [
+                "--benchmark"
+            ],
+            "projectName": "NetworkFlowOptimization"
+        },
+        {
+            "type": "java",
+            "name": "🧪 Run Automated Test Suite",
+            "request": "launch",
+            "mainClass": "test.NetworkFlowTest",
+            "projectName": "NetworkFlowOptimization"
+        }
+    ]
+}

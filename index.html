@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Flow Optimization System | DSA-3</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Top Navigation & Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-badge">DSA-3</div>
+      <div class="header-titles">
+        <h1>Network Flow Optimization System</h1>
+        <p class="subtitle">25CS2103E &bull; KL University &bull; Guidance: <strong>Dr. Ch. Anuradha Mam</strong></p>
+      </div>
+    </div>
+    <div class="team-badge">
+      <span class="team-label">Team Members:</span>
+      <span class="member-tag">K. Vishnu (2520030199)</span>
+      <span class="member-tag">U. Praneeth (2520030188)</span>
+      <span class="member-tag">U. Vidahth (2520030597)</span>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="main-layout">
+    <!-- Left Sidebar: Controls -->
+    <aside class="sidebar">
+      <!-- Scenario Selection Card -->
+      <div class="card control-card">
+        <h3>📂 Network Scenario</h3>
+        <div class="form-group">
+          <label for="scenarioSelect">Dataset & Topology:</label>
+          <select id="scenarioSelect" class="form-control">
+            <option value="sioux-falls" selected>Sioux Falls Road Network (24 Nodes, 76 Links)</option>
+            <option value="sioux-falls-system">Sioux Falls System-Wide Demand (360k Trips OD Matrix)</option>
+            <option value="benchmark-12">12-Node Benchmark Network (Slide 8)</option>
+            <option value="telecom">Telecommunications & Data Center Bandwidth</option>
+            <option value="traffic">Urban Traffic Flow Network (6 Nodes)</option>
+            <option value="pipeline">Municipal Water Distribution Pipeline</option>
+          </select>
+        </div>
+
+        <div class="grid-2col">
+          <div class="form-group">
+            <label for="sourceSelect">Source (Origin S):</label>
+            <select id="sourceSelect" class="form-control"></select>
+          </div>
+          <div class="form-group">
+            <label for="sinkSelect">Sink (Dest T):</label>
+            <select id="sinkSelect" class="form-control"></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Algorithm Selection Card -->
+      <div class="card control-card">
+        <h3>⚡ Algorithm Configuration</h3>
+        <div class="form-group">
+          <label for="algorithmSelect">Optimization Algorithm:</label>
+          <select id="algorithmSelect" class="form-control">
+            <option value="dinic" selected>Dinic's Algorithm — O(V²·E) [Fastest]</option>
+            <option value="edmonds-karp">Edmonds-Karp BFS — O(V·E²)</option>
+            <option value="ford-fulkerson">Ford-Fulkerson DFS — O(E·max_flow)</option>
+          </select>
+        </div>
+
+        <div class="action-buttons">
+          <button id="computeBtn" class="btn btn-primary">
+            <span class="btn-icon">▶</span> Compute Max Flow
+          </button>
+          <button id="benchmarkBtn" class="btn btn-purple">
+            <span class="btn-icon">📊</span> Compare All 3
+          </button>
+          <button id="resetBtn" class="btn btn-secondary">
+            <span class="btn-icon">↺</span> Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Simulation Playback -->
+      <div class="card control-card">
+        <h3>⏯️ Step-by-Step Augmentation</h3>
+        <div class="playback-controls">
+          <button id="stepPrevBtn" class="btn btn-sm">⏮ Prev</button>
+          <button id="playPauseBtn" class="btn btn-sm btn-accent">▶ Play</button>
+          <button id="stepNextBtn" class="btn btn-sm">Next ⏭</button>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-info">
+            <span id="stepCounterText">Step 0 / 0</span>
+            <span id="currentPushedText">Flow: 0.00</span>
+          </div>
+          <input type="range" id="stepSlider" min="0" max="0" value="0" class="slider">
+        </div>
+      </div>
+
+      <!-- Map Legend -->
+      <div class="card legend-card">
+        <h4>🗺️ Visual Legend</h4>
+        <div class="legend-item"><span class="legend-dot source-dot"></span> Source Zone (S)</div>
+        <div class="legend-item"><span class="legend-dot sink-dot"></span> Destination Zone (T)</div>
+        <div class="legend-item"><span class="legend-line bottleneck-line"></span> Min-Cut Bottleneck Link (Saturated)</div>
+        <div class="legend-item"><span class="legend-line active-line"></span> Active Traffic Flow Link</div>
+        <div class="legend-item"><span class="legend-line idle-line"></span> Idle Capacity Link</div>
+      </div>
+    </aside>
+
+    <!-- Center Canvas Area -->
+    <main class="canvas-container">
+      <div class="canvas-header-bar">
+        <div class="status-summary" id="statusSummary">
+          Select a dataset and click <strong>Compute Max Flow</strong>.
+        </div>
+        <div class="canvas-tools">
+          <button id="fitViewBtn" class="btn btn-sm" title="Center View">🎯 Center</button>
+          <button id="zoomInBtn" class="btn btn-sm" title="Zoom In">+</button>
+          <button id="zoomOutBtn" class="btn btn-sm" title="Zoom Out">&minus;</button>
+        </div>
+      </div>
+
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <canvas id="graphCanvas"></canvas>
+        <div id="tooltip" class="tooltip"></div>
+      </div>
+
+      <!-- Live Metric Badges -->
+      <div class="metrics-bar">
+        <div class="metric-card">
+          <span class="metric-label">Computed Max Flow</span>
+          <span class="metric-val text-cyan" id="metricMaxFlow">0.00</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Execution Time</span>
+          <span class="metric-val text-green" id="metricTime">0.00 ms</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Phases / Iterations</span>
+          <span class="metric-val text-orange" id="metricIterations">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Bottleneck Road Links</span>
+          <span class="metric-val text-red" id="metricBottlenecks">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Max-Flow Min-Cut Status</span>
+          <span class="metric-val text-blue" id="metricTheorem">Verified</span>
+        </div>
+      </div>
+
+      <!-- Tabbed Output Panel -->
+      <div class="tabs-container">
+        <div class="tab-headers">
+          <button class="tab-btn active" data-tab="pathsTab">Augmenting Paths Log</button>
+          <button class="tab-btn" data-tab="bottlenecksTab">Min-Cut Bottleneck Segments</button>
+          <button class="tab-btn" data-tab="benchmarkTab">Algorithm Benchmark Comparison</button>
+        </div>
+
+        <div class="tab-content active" id="pathsTab">
+          <div class="paths-list" id="pathsList">
+            <div class="empty-state">No paths recorded yet. Run an algorithm to trace augmenting paths.</div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="bottlenecksTab">
+          <table class="data-table" id="bottleneckTable">
+            <thead>
+              <tr>
+                <th>From Zone</th>
+                <th>To Zone</th>
+                <th>Capacity (Veh/hr)</th>
+                <th>Optimal Flow</th>
+                <th>Saturation Status</th>
+              </tr>
+            </thead>
+            <tbody id="bottleneckTableBody">
+              <tr><td colspan="5" class="empty-cell">Click "Compute Max Flow" to identify bottleneck links.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tab-content" id="benchmarkTab">
+          <table class="data-table" id="benchmarkTable">
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Theoretical Bound</th>
+                <th>Computed Max Flow</th>
+                <th>Iterations / Phases</th>
+                <th>Execution Time</th>
+                <th>Speedup vs FF</th>
+              </tr>
+            </thead>
+            <tbody id="benchmarkTableBody">
+              <tr><td colspan="6" class="empty-cell">Click "Compare All 3" to benchmark algorithms side-by-side.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

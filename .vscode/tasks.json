@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile Network Flow Project",
+            "type": "shell",
+            "command": "javac -encoding UTF-8 -d bin src/model/*.java src/algorithms/*.java src/data/*.java src/benchmark/*.java src/ui/*.java src/Main.java test/*.java",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$javac"]
+        },
+        {
+            "label": "Run GUI Visualizer",
+            "type": "shell",
+            "command": "java -cp bin Main --gui",
+            "group": "test"
+        },
+        {
+            "label": "Run Benchmarks",
+            "type": "shell",
+            "command": "java -cp bin Main --benchmark",
+            "group": "test"
+        }
+    ]
+}

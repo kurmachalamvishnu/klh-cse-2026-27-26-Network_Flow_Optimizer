@@ -1,0 +1,20 @@
+# Nodes: <id> <name>
+0 Main_Reservoir_S
+1 Pumping_Station_A
+2 Pumping_Station_B
+3 Filtration_Plant
+4 Storage_Tank_North
+5 Storage_Tank_South
+6 City_Supply_Zone_T
+
+# Edges: <from> <to> <capacity>
+0 1 50.0
+0 2 45.0
+1 3 35.0
+1 4 25.0
+2 3 30.0
+2 5 20.0
+3 4 15.0
+3 5 15.0
+4 6 40.0
+5 6 35.0
